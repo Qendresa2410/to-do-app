@@ -1,0 +1,41 @@
+body {
+  font-family: sans-serif;
+  margin: 2rem;
+  background-color: bisque;
+}
+
+form {
+  margin-bottom: 1rem;
+}
+
+input[type="text"] {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+select,
+button {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.task-item.completed {
+  opacity: 0.6;
+}
+
+.label {
+  background-color: #ddd;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
