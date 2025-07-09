@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function TaskItem({ task, onToggle, onDelete }) {
+function TaskItem({ task, onToggle, onRequestDelete }) {
   const navigate = useNavigate();
   const isApi = task.source === "api";
 
@@ -28,9 +28,9 @@ function TaskItem({ task, onToggle, onDelete }) {
         {isApi ? "API" : task.category}
       </span>
       {task.source === "local" && (
-        <button onClick={() => onDelete(task.id)} style={{ marginLeft: "10px" }}>
-          Obriši
-        </button>
+        <button onClick={() => onRequestDelete(task)} style={{ marginLeft: "10px" }}>
+  Obriši
+</button>
       )}
     </div>
   );

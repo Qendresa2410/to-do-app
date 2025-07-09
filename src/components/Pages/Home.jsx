@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
-import TaskItem from "../TaskItem/TaskItem"
+import { useState, useEffect } from "react";
+import TaskItem from "../TaskItem/TaskItem"; // prilagodi putanju ako treba
+
+const CATEGORY_OPTIONS = ["Posao", "Osobno", "Obitelj", "API"];
 
 function Home() {
-  const CATEGORY_OPTIONS = ["Posao", "Osobno", "Obitelj", "API"];
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Posao");
   const [filter, setFilter] = useState("Sve");
+  const [error, setError] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -21,25 +24,26 @@ function Home() {
       }));
       setTasks(apiTasks);
     }
-
     fetchTasks();
   }, []);
 
-function handleAdd(e) {
-  e.preventDefault();
-  if (!title.trim()) return;
-  const newTask = {
-    id: Date.now(),
-    title: title.trim(),
-    completed: false,
-    category,
-    source: "local",
-  };
-  setTasks((prev) => [...prev, newTask]);
-  setTitle("");
-}
-
-
+  function handleAdd(e) {
+    e.preventDefault();
+    if (!title.trim()) {
+      setError(true);
+      return;
+    }
+    const newTask = {
+      id: Date.now(),
+      title: title.trim(),
+      completed: false,
+      category,
+      source: "local",
+    };
+    setTasks((prev) => [...prev, newTask]);
+    setTitle("");
+    setError(false);
+  }
 
   function toggleComplete(id) {
     setTasks((prev) =>
@@ -51,6 +55,13 @@ function handleAdd(e) {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   }
 
+  function confirmDelete() {
+    if (taskToDelete) {
+      deleteTask(taskToDelete.id);
+      setTaskToDelete(null);
+    }
+  }
+
   const filteredTasks = tasks.filter((t) =>
     filter === "Sve" ? true : t.category === filter
   );
@@ -59,10 +70,18 @@ function handleAdd(e) {
     <div>
       <form onSubmit={handleAdd}>
         <input
+          type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            if (e.target.value.trim()) setError(false);
+          }}
           placeholder="Naziv zadatka"
+          required
+          className={error ? "input-error" : ""}
         />
+        {error && <p className="error-message">Naziv zadatka je obavezan.</p>}
+
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           {CATEGORY_OPTIONS.filter((c) => c !== "API").map((c) => (
             <option key={c} value={c}>{c}</option>
@@ -72,12 +91,11 @@ function handleAdd(e) {
       </form>
 
       <div>
-       {["Sve", ...CATEGORY_OPTIONS].map((c) => (
-  <button key={c} onClick={() => setFilter(c)}>
-    {c}
-  </button>
-))}
-
+        {["Sve", ...CATEGORY_OPTIONS].map((c) => (
+          <button key={c} onClick={() => setFilter(c)}>
+            {c}
+          </button>
+        ))}
       </div>
 
       <div>
@@ -86,14 +104,24 @@ function handleAdd(e) {
             key={task.id}
             task={task}
             onToggle={toggleComplete}
-            onDelete={deleteTask}
+             onRequestDelete={() => setTaskToDelete(task)} 
           />
         ))}
       </div>
+
+      {taskToDelete && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <p>
+              Jeste li sigurni da želite izbrisati zadatak: <b>{taskToDelete.title}</b>?
+            </p>
+            <button onClick={confirmDelete} className="confirm-btn">Da</button>
+            <button onClick={() => setTaskToDelete(null)} className="cancel-btn">Odustani</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Home;
-
-
