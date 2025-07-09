@@ -25,19 +25,21 @@ function Home() {
     fetchTasks();
   }, []);
 
-  function handleAdd(e) {
-    e.preventDefault();
-    if (!title.trim()) return;
-    const newTask = {
-      id: Date.now(),
-      title: title.trim(),
-      completed: false,
-      category,
-      source: "local",
-    };
-    setTasks((prev) => [prev, newTask]);
-    setTitle("");
-  }
+function handleAdd(e) {
+  e.preventDefault();
+  if (!title.trim()) return;
+  const newTask = {
+    id: Date.now(),
+    title: title.trim(),
+    completed: false,
+    category,
+    source: "local",
+  };
+  setTasks((prev) => [...prev, newTask]);
+  setTitle("");
+}
+
+
 
   function toggleComplete(id) {
     setTasks((prev) =>
@@ -70,11 +72,12 @@ function Home() {
       </form>
 
       <div>
-        {["Sve", CATEGORY_OPTIONS].map((c) => (
-          <button key={c} onClick={() => setFilter(c)}>
-            {c}
-          </button>
-        ))}
+       {["Sve", ...CATEGORY_OPTIONS].map((c) => (
+  <button key={c} onClick={() => setFilter(c)}>
+    {c}
+  </button>
+))}
+
       </div>
 
       <div>
@@ -92,3 +95,5 @@ function Home() {
 }
 
 export default Home;
+
+
